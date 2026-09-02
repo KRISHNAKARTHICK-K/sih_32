@@ -1,0 +1,245 @@
+# ==============================================================================
+# AGRIPROCURE — Comprehensive Root .gitignore
+# Production-Grade Secret, Environment & Build Artifact Protection
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Operating System Metadata
+# ------------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ------------------------------------------------------------------------------
+# 2. IDE & Editor Metadata
+# ------------------------------------------------------------------------------
+# JetBrains (IntelliJ IDEA, WebStorm, PyCharm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Visual Studio Code (Workspace files ignored, explicit configs allowed)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.code-workspace
+
+# Eclipse / NetBeans / Other Editors
+.classpath
+.project
+.settings/
+.springBeans
+.factorypath
+.nb-gradle/
+.nbproject/
+nbproject/
+build.xml
+*~.nib
+
+# Vim / Emacs / Sublime Text / Nano
+*.swp
+*.swo
+*.swn
+*.swm
+*~
+\#*\#
+.\#*
+*.sublime-project
+*.sublime-workspace
+.history/
+*.bak
+*.backup
+*.old
+*.orig
+
+# ------------------------------------------------------------------------------
+# 3. Environment Variables & Secret Configuration
+# ------------------------------------------------------------------------------
+# Environment Files (Keep .env.example / .env.template tracked)
+.env
+.env.*
+!.env.example
+!.env.template
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+!frontend/.env.template
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+local.properties
+
+# Secrets, Credentials & Private Keys
+*.pem
+*.key
+*.pkcs12
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.cer
+*.crt
+*.der
+credentials.json
+service-account*.json
+secrets.json
+secret.json
+*secret*.json
+*credential*.json
+*token*.json
+firebase-adminsdk*.json
+id_rsa
+id_rsa.pub
+id_ecdsa
+id_ed25519
+*.pub
+
+# ------------------------------------------------------------------------------
+# 4. Node / React / TypeScript / Vite (Frontend)
+# ------------------------------------------------------------------------------
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+.yarn/
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.yarn-integrity
+.pnp
+.pnp.js
+
+# Build Outputs & Cache
+dist/
+dist-ssr/
+build/
+frontend/dist/
+frontend/dist-ssr/
+frontend/build/
+.vite/
+frontend/.vite/
+.turbo/
+.parcel-cache/
+.cache/
+.eslintcache
+.stylelintcache
+.oxlintcache
+
+# ------------------------------------------------------------------------------
+# 5. Java / Maven / Spring Boot (Backend)
+# ------------------------------------------------------------------------------
+# Compiled class files
+*.class
+
+# Log Files & Crash Dumps
+*.log
+logs/
+log/
+backend/logs/
+*.log.*
+hs_err_pid*
+replay_pid*
+
+# Package Files & Maven Target
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+target/
+backend/target/
+!.mvn/wrapper/maven-wrapper.jar
+!mvnw
+!mvnw.cmd
+.mvn/timing.properties
+
+# Spring Boot Developer Tools
+.spring-boot-devtools.properties
+
+# ------------------------------------------------------------------------------
+# 6. Database & Local Data Storage
+# ------------------------------------------------------------------------------
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite3-journal
+*.h2.db
+*.trace.db
+*.dump
+*.sql.gz
+*.sql.tar
+*.sql.bak
+*.bak
+*.backup
+pgdata/
+postgres-data/
+
+# ------------------------------------------------------------------------------
+# 7. Test, Coverage & QA Reports
+# ------------------------------------------------------------------------------
+coverage/
+frontend/coverage/
+.nyc_output/
+test-results/
+playwright-report/
+cypress/videos/
+cypress/screenshots/
+allure-results/
+allure-report/
+.scannerwork/
+.sonar/
+
+# ------------------------------------------------------------------------------
+# 8. Temporary Files & Scratch Data
+# ------------------------------------------------------------------------------
+tmp/
+temp/
+*.tmp
+*.temp
+scratch/
+.system_generated/
