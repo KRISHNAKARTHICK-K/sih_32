@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { Wheat, Shield, Lock, User, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
+import { Wheat, Shield, Lock, User, AlertCircle, Loader2, CheckCircle2, Smartphone } from 'lucide-react';
 import { APP_NAME } from '../constants';
 
 export const LoginPage: React.FC = () => {
@@ -30,7 +30,6 @@ export const LoginPage: React.FC = () => {
       await login({ username: username.trim(), password });
       navigate(from, { replace: true });
     } catch (err: any) {
-      console.error('Login error:', err);
       const msg = err.response?.data?.message || err.message || 'Unable to sign in. Please check your credentials.';
       setError(msg);
     } finally {
@@ -60,7 +59,7 @@ export const LoginPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-400 font-normal leading-none mt-0.5">
-              Agricultural Procurement &amp; Queue Management
+              Procurement Staff &amp; Operational Portal
             </p>
           </div>
         </div>
@@ -84,7 +83,7 @@ export const LoginPage: React.FC = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username" className="block text-xs font-semibold text-slate-700">
-                Username / Mobile / Email
+                Staff Username / Email
               </label>
               <div className="mt-1 relative rounded-md shadow-xs">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -98,7 +97,7 @@ export const LoginPage: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. admin, operator, or farmer1"
+                  placeholder="e.g. admin, manager, or operator"
                   className="block w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-700 focus:border-emerald-700 bg-white"
                 />
               </div>
@@ -159,19 +158,19 @@ export const LoginPage: React.FC = () => {
                 ) : (
                   <>
                     <Shield className="w-4 h-4" />
-                    <span>Sign In to ERP</span>
+                    <span>Sign In to ERP Portal</span>
                   </>
                 )}
               </button>
             </div>
           </form>
 
-          {/* Quick Demo Credentials Panel for Development Review */}
+          {/* Quick Demo Credentials Panel for ERP Staff Accounts */}
           <div className="mt-6 pt-5 border-t border-slate-200">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2.5 text-center">
-              Development Test Accounts
+              ERP Staff Test Accounts
             </p>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
               <button
                 type="button"
                 onClick={() => setDemoCredentials('admin', 'Admin@123')}
@@ -189,7 +188,7 @@ export const LoginPage: React.FC = () => {
                 className="p-2 border border-slate-200 rounded text-left hover:bg-emerald-50 hover:border-emerald-300 transition-colors flex flex-col"
               >
                 <span className="font-semibold text-slate-800 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-700" /> Centre Manager
+                  <CheckCircle2 className="w-3 h-3 text-emerald-700" /> Manager
                 </span>
                 <span className="text-slate-500 font-mono text-[10px]">manager / Manager@123</span>
               </button>
@@ -204,17 +203,14 @@ export const LoginPage: React.FC = () => {
                 </span>
                 <span className="text-slate-500 font-mono text-[10px]">operator / Operator@123</span>
               </button>
+            </div>
+          </div>
 
-              <button
-                type="button"
-                onClick={() => setDemoCredentials('farmer1', 'Farmer@123')}
-                className="p-2 border border-slate-200 rounded text-left hover:bg-emerald-50 hover:border-emerald-300 transition-colors flex flex-col"
-              >
-                <span className="font-semibold text-slate-800 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-700" /> Farmer (Muthusamy)
-                </span>
-                <span className="text-slate-500 font-mono text-[10px]">farmer1 / Farmer@123</span>
-              </button>
+          {/* Farmer Mobile App Notice */}
+          <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-md flex items-center gap-2.5">
+            <Smartphone className="w-5 h-5 text-emerald-700 shrink-0" />
+            <div className="text-[11px] text-slate-600 leading-tight">
+              <strong className="text-slate-800">Are you a Farmer?</strong> Please use the official <strong>AgriProcure Mobile Application</strong> for slot booking, token passes, and payment tracking.
             </div>
           </div>
         </div>

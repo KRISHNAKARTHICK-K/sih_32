@@ -95,6 +95,10 @@ frontend/.env
 frontend/.env.*
 !frontend/.env.example
 !frontend/.env.template
+farmer-mobile/.env
+farmer-mobile/.env.*
+!farmer-mobile/.env.example
+!farmer-mobile/.env.template
 *.env
 *.env.local
 *.env.development.local
@@ -132,6 +136,7 @@ id_ed25519
 # ------------------------------------------------------------------------------
 node_modules/
 frontend/node_modules/
+farmer-mobile/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -155,11 +160,18 @@ build/
 frontend/dist/
 frontend/dist-ssr/
 frontend/build/
+farmer-mobile/dist/
+farmer-mobile/build/
+farmer-mobile/.expo/
+farmer-mobile/android/
+farmer-mobile/ios/
+.expo/
 .vite/
 frontend/.vite/
 .turbo/
 .parcel-cache/
 .cache/
+farmer-mobile/.cache/
 .eslintcache
 .stylelintcache
 .oxlintcache

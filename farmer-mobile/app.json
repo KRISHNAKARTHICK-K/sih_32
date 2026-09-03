@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "AgriProcure",
+    "slug": "agriprocure-farmer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "agriprocure-farmer",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#15803D"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.agriprocure.farmer"
+    },
+    "android": {
+      "versionCode": 1,
+      "package": "com.agriprocure.farmer",
+      "permissions": [],
+      "adaptiveIcon": {
+        "backgroundColor": "#15803D",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}

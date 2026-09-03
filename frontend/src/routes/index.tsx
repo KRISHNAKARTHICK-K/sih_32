@@ -6,16 +6,6 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { useAuth } from '../auth/AuthContext';
 
-// Farmer Portal Pages
-import { FarmerDashboardPage } from '../pages/farmer/FarmerDashboardPage';
-import { NewBookingPage } from '../pages/farmer/NewBookingPage';
-import { FarmerBookingsPage } from '../pages/farmer/FarmerBookingsPage';
-import { BookingDetailsPage } from '../pages/farmer/BookingDetailsPage';
-import { FarmerQueuePage } from '../pages/farmer/FarmerQueuePage';
-import { FarmerProcurementPage } from '../pages/farmer/FarmerProcurementPage';
-import { FarmerPaymentsPage } from '../pages/farmer/FarmerPaymentsPage';
-import { FarmerNotificationsPage } from '../pages/farmer/FarmerNotificationsPage';
-
 // Operator ERP Pages
 import { OperatorDashboardPage } from '../pages/operator/OperatorDashboardPage';
 import { OperatorQueuePage } from '../pages/operator/OperatorQueuePage';
@@ -52,9 +42,6 @@ import { AdminSystemPage } from '../pages/admin/AdminSystemPage';
 
 const RoleBasedDashboard: React.FC = () => {
   const { role } = useAuth();
-  if (role === 'FARMER') {
-    return <FarmerDashboardPage />;
-  }
   if (role === 'OPERATOR') {
     return <OperatorDashboardPage />;
   }
@@ -87,72 +74,6 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <Navigate to="/" replace />,
-      },
-
-      // Farmer Portal Routes (Protected exclusively for FARMER role)
-      {
-        path: 'farmer',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <FarmerDashboardPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/bookings',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <FarmerBookingsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/bookings/new',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <NewBookingPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/bookings/:id',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <BookingDetailsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/queue',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <FarmerQueuePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/procurement',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <FarmerProcurementPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/payments',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <FarmerPaymentsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'farmer/notifications',
-        element: (
-          <ProtectedRoute allowedRoles={['FARMER']}>
-            <FarmerNotificationsPage />
-          </ProtectedRoute>
-        ),
       },
 
       // Operator ERP Routes (Protected for OPERATOR, CENTRE_MANAGER, ADMIN)
@@ -417,10 +338,6 @@ export const router = createBrowserRouter([
       {
         path: 'analytics',
         element: <Navigate to="/admin/dashboard" replace />,
-      },
-      {
-        path: 'notifications',
-        element: <Navigate to="/farmer/notifications" replace />,
       },
     ],
   },

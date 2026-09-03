@@ -33,6 +33,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       const userData = await authApi.getMe();
+      if (userData.role === 'FARMER') {
+        // Farmer users are not permitted on the web ERP
+        removeStoredToken();
+        setToken(null);
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
       setUser(userData);
       setToken(storedToken);
     } catch (err) {
@@ -53,6 +61,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const data = await authApi.login(credentials);
+      if (data.user.role === 'FARMER') {
+        removeStoredToken();
+        setToken(null);
+        setUser(null);
+        throw new Error('Farmer accounts must use the AgriProcure mobile application. The web ERP portal is exclusively for procurement staff and administrators.');
+      }
       setStoredToken(data.accessToken);
       setToken(data.accessToken);
       setUser(data.user);

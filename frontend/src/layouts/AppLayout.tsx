@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
   LayoutDashboard,
   Activity,
@@ -27,7 +26,6 @@ import {
 import { APP_NAME } from '../constants';
 import { cn } from '../utils/cn';
 import { useAuth } from '../auth/AuthContext';
-import { farmerApi } from '../api/farmerApi';
 import { useWebSocket } from '../realtime/WebSocketContext';
 import { useRealtimeSync } from '../realtime/useRealtimeSync';
 import type { UserRole } from '../auth/authTypes';
@@ -52,62 +50,9 @@ export const AppLayout: React.FC = () => {
   // Mount real-time event listener and TanStack query synchronizer
   useRealtimeSync();
 
-  // Fetch real unread notification count for authenticated user
-  const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['unread-notifications-count', user?.id],
-    queryFn: () => (user?.id ? farmerApi.getUnreadNotificationCount(user.id) : Promise.resolve(0)),
-    enabled: !!user?.id,
-    refetchInterval: 30000,
-  });
-
-  // Role-specific dynamic navigation items
+  // Role-specific dynamic navigation items for ERP staff roles (OPERATOR, CENTRE_MANAGER, ADMIN)
   const roleNavItems: NavItemConfig[] = useMemo(() => {
     const allItems: NavItemConfig[] = [
-      // Farmer Navigation
-      {
-        id: 'farmer-dashboard',
-        label: 'Dashboard',
-        path: '/farmer',
-        icon: <LayoutDashboard className="w-4 h-4" />,
-        roles: ['FARMER'],
-      },
-      {
-        id: 'farmer-bookings',
-        label: 'My Bookings',
-        path: '/farmer/bookings',
-        icon: <CalendarCheck className="w-4 h-4" />,
-        roles: ['FARMER'],
-      },
-      {
-        id: 'farmer-queue',
-        label: 'My Queue Token',
-        path: '/farmer/queue',
-        icon: <Clock className="w-4 h-4" />,
-        roles: ['FARMER'],
-      },
-      {
-        id: 'farmer-procurement',
-        label: 'My Procurement',
-        path: '/farmer/procurement',
-        icon: <PackageCheck className="w-4 h-4" />,
-        roles: ['FARMER'],
-      },
-      {
-        id: 'farmer-payments',
-        label: 'My Payments',
-        path: '/farmer/payments',
-        icon: <CreditCard className="w-4 h-4" />,
-        roles: ['FARMER'],
-      },
-      {
-        id: 'farmer-notifications',
-        label: 'Notifications',
-        path: '/farmer/notifications',
-        icon: <Bell className="w-4 h-4" />,
-        badge: unreadCount > 0 ? `${unreadCount}` : undefined,
-        roles: ['FARMER'],
-      },
-
       // Operator Navigation
       {
         id: 'operator-dashboard',
@@ -301,7 +246,7 @@ export const AppLayout: React.FC = () => {
 
     if (!role) return [];
     return allItems.filter((item) => item.roles.includes(role));
-  }, [role, unreadCount]);
+  }, [role]);
 
   const currentNav = roleNavItems.find(
     (item) => item.path === location.pathname || (item.path !== '/' && location.pathname.startsWith(item.path))
@@ -377,21 +322,10 @@ export const AppLayout: React.FC = () => {
 
         {/* Right: Notifications & User Profile */}
         <div className="flex items-center gap-3">
-          {/* Notifications Button */}
-          <button
-            type="button"
-            onClick={() => navigate(role === 'FARMER' ? '/farmer/notifications' : '/notifications')}
-            className="relative p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors"
-            aria-label="Notifications"
-            title="System notifications"
-          >
+          {/* Notifications Indicator */}
+          <div className="relative p-1.5 text-slate-500 rounded" title="System operational">
             <Bell className="w-4 h-4" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-emerald-700 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
-                {unreadCount}
-              </span>
-            )}
-          </button>
+          </div>
 
           <div className="h-5 w-px bg-slate-200" />
 
@@ -434,7 +368,7 @@ export const AppLayout: React.FC = () => {
                   <div className="px-3 py-2 border-b border-slate-100 bg-slate-50/70">
                     <p className="font-semibold text-slate-800">{user?.fullName || user?.username}</p>
                     <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-                      {user?.farmerCode ? `Farmer Code: ${user.farmerCode}` : `User: @${user?.username}`}
+                      User: @{user?.username}
                     </p>
                   </div>
                   <div className="py-1">
