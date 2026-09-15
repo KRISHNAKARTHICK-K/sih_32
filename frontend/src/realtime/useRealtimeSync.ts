@@ -9,13 +9,24 @@ const MAX_SEEN_EVENTS = 200;
 export const useRealtimeSync = () => {
   const queryClient = useQueryClient();
   const { user, role } = useAuth();
-  const { subscribe } = useWebSocket();
+  const { subscribe, status } = useWebSocket();
   const seenEventsRef = useRef<Set<string>>(new Set());
+  const prevStatusRef = useRef(status);
+
+  // 1. Reconnection Data Reconciliation
+  // When re-establishing connection after disruption, invalidate all active queries to fetch fresh authoritative state
+  useEffect(() => {
+    if (prevStatusRef.current !== 'CONNECTED' && status === 'CONNECTED') {
+      console.info('[Realtime Sync] Connection established/reconnected. Reconciling active ERP queries with database...');
+      queryClient.invalidateQueries();
+    }
+    prevStatusRef.current = status;
+  }, [status, queryClient]);
 
   const handleEvent = (event: RealtimeEvent) => {
     if (!event || !event.eventId) return;
 
-    // Deduplication check
+    // Event Deduplication check
     if (seenEventsRef.current.has(event.eventId)) {
       return;
     }
@@ -38,10 +49,15 @@ export const useRealtimeSync = () => {
       case 'QUEUE_UPDATED':
       case 'TOKEN_CALLED':
       case 'TOKEN_UPDATED':
+      case 'TOKEN_STATUS_CHANGED':
         queryClient.invalidateQueries({ queryKey: ['queue-overview'] });
-        queryClient.invalidateQueries({ queryKey: ['operator-queue'] });
-        queryClient.invalidateQueries({ queryKey: ['manager-queue'] });
-        queryClient.invalidateQueries({ queryKey: ['manager-operations'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-queue-overview'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-queue-board'] });
+        queryClient.invalidateQueries({ queryKey: ['manager-queue-board'] });
+        queryClient.invalidateQueries({ queryKey: ['manager-operations-queue'] });
+        queryClient.invalidateQueries({ queryKey: ['weighbridge-queue'] });
+        queryClient.invalidateQueries({ queryKey: ['quality-queue'] });
+        queryClient.invalidateQueries({ queryKey: ['queue-token-detail'] });
         queryClient.invalidateQueries({ queryKey: ['farmer-queue-tokens'] });
         queryClient.invalidateQueries({ queryKey: ['farmer-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['operator-dashboard'] });
@@ -50,11 +66,22 @@ export const useRealtimeSync = () => {
         break;
 
       case 'BOOKING_CREATED':
+      case 'BOOKING_UPDATED':
+        queryClient.invalidateQueries({ queryKey: ['operator-centre-bookings'] });
         queryClient.invalidateQueries({ queryKey: ['centre-bookings'] });
         queryClient.invalidateQueries({ queryKey: ['manager-bookings'] });
-        queryClient.invalidateQueries({ queryKey: ['farmer-bookings'] });
-        queryClient.invalidateQueries({ queryKey: ['farmer-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['admin-bookings'] });
+        queryClient.invalidateQueries({ queryKey: ['farmer-bookings'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-queue-overview'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-queue-board'] });
+        queryClient.invalidateQueries({ queryKey: ['manager-queue-board'] });
+        queryClient.invalidateQueries({ queryKey: ['manager-slots'] });
+        queryClient.invalidateQueries({ queryKey: ['centre-slots'] });
+        queryClient.invalidateQueries({ queryKey: ['slots'] });
+        queryClient.invalidateQueries({ queryKey: ['available-slots'] });
+        queryClient.invalidateQueries({ queryKey: ['farmer-dashboard'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-dashboard'] });
+        queryClient.invalidateQueries({ queryKey: ['manager-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['queue-overview'] });
         break;
@@ -62,27 +89,36 @@ export const useRealtimeSync = () => {
       case 'WEIGHMENT_COMPLETED':
       case 'QUALITY_COMPLETED':
       case 'PROCUREMENT_COMPLETED':
+      case 'INTAKE_STATUS_UPDATED':
+        queryClient.invalidateQueries({ queryKey: ['operator-procurement-records'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-procurements'] });
+        queryClient.invalidateQueries({ queryKey: ['procurement-for-token'] });
+        queryClient.invalidateQueries({ queryKey: ['procurement-detail'] });
         queryClient.invalidateQueries({ queryKey: ['centre-procurements'] });
-        queryClient.invalidateQueries({ queryKey: ['manager-procurement'] });
+        queryClient.invalidateQueries({ queryKey: ['manager-procurements'] });
         queryClient.invalidateQueries({ queryKey: ['farmer-procurements'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-procurements'] });
         queryClient.invalidateQueries({ queryKey: ['operator-weighment'] });
         queryClient.invalidateQueries({ queryKey: ['operator-quality'] });
-        queryClient.invalidateQueries({ queryKey: ['manager-operations'] });
-        queryClient.invalidateQueries({ queryKey: ['farmer-dashboard'] });
-        queryClient.invalidateQueries({ queryKey: ['operator-dashboard'] });
+        queryClient.invalidateQueries({ queryKey: ['weighbridge-queue'] });
+        queryClient.invalidateQueries({ queryKey: ['quality-queue'] });
+        queryClient.invalidateQueries({ queryKey: ['queue-token-detail'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-queue-board'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-queue-overview'] });
         queryClient.invalidateQueries({ queryKey: ['manager-dashboard'] });
-        queryClient.invalidateQueries({ queryKey: ['admin-procurement'] });
+        queryClient.invalidateQueries({ queryKey: ['operator-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['queue-overview'] });
         break;
 
       case 'PAYMENT_PROCESSED':
-        queryClient.invalidateQueries({ queryKey: ['centre-payments'] });
+      case 'PAYMENT_UPDATED':
         queryClient.invalidateQueries({ queryKey: ['manager-payments'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-payments'] });
         queryClient.invalidateQueries({ queryKey: ['farmer-payments'] });
+        queryClient.invalidateQueries({ queryKey: ['centre-payments'] });
         queryClient.invalidateQueries({ queryKey: ['farmer-dashboard'] });
         queryClient.invalidateQueries({ queryKey: ['manager-dashboard'] });
-        queryClient.invalidateQueries({ queryKey: ['admin-payments'] });
         queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
         break;
 
@@ -92,9 +128,11 @@ export const useRealtimeSync = () => {
         queryClient.invalidateQueries({ queryKey: ['available-slots'] });
         queryClient.invalidateQueries({ queryKey: ['manager-slots'] });
         queryClient.invalidateQueries({ queryKey: ['manager-dashboard'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
         break;
 
       default:
+        console.warn(`[Realtime Sync] Unhandled event type: ${event.eventType}`);
         break;
     }
   };
@@ -104,11 +142,11 @@ export const useRealtimeSync = () => {
 
     const unsubs: Array<() => void> = [];
 
-    // 1. User-specific notifications
+    // 1. User-specific notifications & personal payments
     unsubs.push(subscribe('/user/queue/notifications', handleEvent));
     unsubs.push(subscribe('/user/queue/payments', handleEvent));
 
-    // 2. Centre-specific topics (for Operator, Centre Manager, or Farmer assigned to centre)
+    // 2. Centre-specific operational topics (for Operator, Centre Manager, or Farmer assigned to centre)
     if (user.centreId) {
       unsubs.push(subscribe(`/topic/centres/${user.centreId}/queue`, handleEvent));
       unsubs.push(subscribe(`/topic/centres/${user.centreId}/bookings`, handleEvent));

@@ -320,8 +320,42 @@ export const AppLayout: React.FC = () => {
           </div>
         </div>
 
-        {/* Right: Notifications & User Profile */}
+        {/* Right: Real-time Connection Indicator, Notifications & User Profile */}
         <div className="flex items-center gap-3">
+          {/* Real-Time Live Connection Indicator */}
+          <div
+            id="ws-connection-indicator"
+            className="flex items-center gap-1.5 transition-all"
+            title={`Real-Time Status: ${wsStatus}`}
+          >
+            {wsStatus === 'CONNECTED' && (
+              <span className="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Live
+              </span>
+            )}
+            {wsStatus === 'RECONNECTING' && (
+              <span className="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                Reconnecting...
+              </span>
+            )}
+            {wsStatus === 'CONNECTING' && (
+              <span className="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                Connecting...
+              </span>
+            )}
+            {wsStatus === 'DISCONNECTED' && (
+              <span className="inline-flex items-center gap-1.5 text-slate-500 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                <span className="w-2 h-2 rounded-full bg-slate-400" />
+                Offline
+              </span>
+            )}
+          </div>
+
+          <div className="h-4 w-px bg-slate-200" />
+
           {/* Notifications Indicator */}
           <div className="relative p-1.5 text-slate-500 rounded" title="System operational">
             <Bell className="w-4 h-4" />

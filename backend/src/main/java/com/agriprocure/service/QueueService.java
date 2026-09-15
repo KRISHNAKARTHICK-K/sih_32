@@ -167,7 +167,7 @@ public class QueueService {
 
         QueueTokenResponse tokenResponse = mapToResponse(saved);
         com.agriprocure.dto.RealtimeEvent event = new com.agriprocure.dto.RealtimeEvent(
-                com.agriprocure.dto.RealtimeEventType.TOKEN_UPDATED,
+                com.agriprocure.dto.RealtimeEventType.TOKEN_STATUS_CHANGED,
                 token.getCentre().getId(),
                 "QUEUE_TOKEN",
                 saved.getId().toString(),
@@ -175,6 +175,16 @@ public class QueueService {
         );
         eventPublisher.publishToCentre(token.getCentre().getId(), "queue", event);
         eventPublisher.publishToAdmin(event);
+
+        com.agriprocure.dto.RealtimeEvent legacyEvent = new com.agriprocure.dto.RealtimeEvent(
+                com.agriprocure.dto.RealtimeEventType.TOKEN_UPDATED,
+                token.getCentre().getId(),
+                "QUEUE_TOKEN",
+                saved.getId().toString(),
+                tokenResponse
+        );
+        eventPublisher.publishToCentre(token.getCentre().getId(), "queue", legacyEvent);
+        eventPublisher.publishToAdmin(legacyEvent);
 
         return tokenResponse;
     }
